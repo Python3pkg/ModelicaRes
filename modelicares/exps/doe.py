@@ -67,8 +67,8 @@ def _accept_kwargs(func):
         if space:
             return func(*space)
         else:
-            keys = kwargs.keys()
-            return (dict(zip(keys, vals)) for vals in func(*kwargs.values()))
+            keys = list(kwargs.keys())
+            return (dict(list(zip(keys, vals))) for vals in func(*list(kwargs.values())))
 
     return wrapped
 
@@ -118,7 +118,7 @@ def aslisted(*space):
      (a=0, b(c=0, d=0))
      (a=1, b(c=1, d=1))
      """
-    return zip(*space)
+    return list(zip(*space))
 
 
 @accept_dict

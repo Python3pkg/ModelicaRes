@@ -10,7 +10,7 @@ from modelicares import util
 from modelicares.texunit import number_label
 
 # Generate some random data.
-x = range(100)
+x = list(range(100))
 y = np.cumsum(np.random.random(100) - 0.5)
 y -= y.min()
 y *= 1e-3

@@ -128,7 +128,7 @@ def _apply_unit(number, unit):
     """Apply the value of a unit to a number (in place).
     """
     unit_value = nc.value(unit)
-    if unit_value <> 1.0:
+    if unit_value != 1.0:
         # Apply the unit.
         number *= unit_value
 
@@ -166,7 +166,7 @@ def loadtxt(file_name, variable_names=None, skip_header=1):
 
         # Skip the header.
         for i in range(skip_header):
-            f.next()
+            next(f)
 
         # Collect the variables and values.
         data = {}
@@ -180,20 +180,20 @@ def loadtxt(file_name, variable_names=None, skip_header=1):
             type_string, name, nrows, ncols = SPLIT_DEFINITION(line).groups()
 
             # Parse the variable's value, if it is selected
-            rows = range(int(nrows))
+            rows = list(range(int(nrows)))
             if variable_names is None or name in variable_names:
                 try:
                     parse = PARSERS[type_string]
                 except KeyError:
                     raise KeyError('Unknown variable type: ' + type_string)
                 try:
-                    data[name] = parse(f.next, rows)
+                    data[name] = parse(f.__next__, rows)
                 except StopIteration:
                     raise ValueError('Unexpected end of file')
             else:
                 # Skip the current variable.
                 for row in rows:
-                    f.next()
+                    next(f)
     return data
 
 
@@ -252,7 +252,7 @@ def read(fname, constants_only=False):
                 'but it should be "binNormal" or "binTrans".' % Aclass[3])
 
         # Undo the transposition and convert character arrays to strings.
-        for name, value in data.items():
+        for name, value in list(data.items()):
             if value.dtype == '<U1':
                 data[name] = get_strings(value.T if transposed else value)
             elif transposed:
@@ -260,7 +260,7 @@ def read(fname, constants_only=False):
 
     else:
         # In a text file, only the data_1, data_2, etc. matrices are transposed.
-        for name, value in data.items():
+        for name, value in list(data.items()):
             if name.startswith('data_'):
                 data[name] = value.T
 
@@ -397,7 +397,7 @@ def readsim(fname, constants_only=False):
                                                       signed_values,
                                                       negated),
                                               '1', '/', description))
-        variables = dict(zip(names, variables))
+        variables = dict(list(zip(names, variables)))
 
         # Time is from the last data set.
         #variables['Time'] = Variable(Samples(times, times, False),

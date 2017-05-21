@@ -26,7 +26,7 @@ def build():
     with open(readme, 'r') as rstfile:
         parsed = publish_string(rstfile.read())
     if error_start in parsed:
-        print("Errors in " + readme)
+        print(("Errors in " + readme))
         delayed_exit()
 
     # Run other setup tests.
@@ -39,7 +39,7 @@ def build():
     lastversion = git.describe('--tags', commit).stdout.rstrip().lstrip('v')
     # This is simpler but doesn't always return the latest tag:
     # lastversion = git.describe('--tag', abbrev=0).stdout.rstrip()
-    version = raw_input("Enter the version number (last was %s): "
+    version = input("Enter the version number (last was %s): "
                         % lastversion)
 
     # Tag the version (will prompt for message).
@@ -80,7 +80,7 @@ def release():
 
     # Rebase and push the master with tags to origin.
     print("Here are the remaining TODO items:")
-    print(bash('TODO.sh'))
+    print((bash('TODO.sh')))
     print()
     if not yes("Do you still want to rebase and push the master with tags to "
                " origin (y/n)?"):
@@ -117,7 +117,7 @@ def funcs_str():
     """Return a string listing the valid functions and their descriptions.
     """
     return "\n".join(["  %s: %s" % (arg.ljust(8), function.description)
-                      for (arg, function) in ACTIONS.items()])
+                      for (arg, function) in list(ACTIONS.items())])
 
 # Main
 if len(sys.argv) != 2:

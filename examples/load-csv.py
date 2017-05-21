@@ -10,9 +10,9 @@ if __name__ == '__main__':
 
     fname = "load-csv.csv"
     data = load_csv(fname, header_row=2)
-    print('Data has been loaded from "%s" into the "data" dictionary.' % fname)
+    print(('Data has been loaded from "%s" into the "data" dictionary.' % fname))
     print("It contains these keys:")
-    print(data.keys())
+    print((list(data.keys())))
     print("Use the Python prompt to explore the data.")
 
     # Embed an IPython or standard Python interpreter.

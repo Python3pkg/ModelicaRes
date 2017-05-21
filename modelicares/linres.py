@@ -182,8 +182,8 @@ class LinRes(Res):
                 except IOError:
                     raise
                 except Exception as exception:
-                    print("The %s reader gave the following error message:\n%s"
-                          % (tool, exception.args[0]))
+                    print(("The %s reader gave the following error message:\n%s"
+                          % (tool, exception.args[0])))
                     print("Trying the next reader...")
                     continue
                 else:
@@ -878,7 +878,7 @@ class LinResList(ResList):
         n_styles = len(styles)
 
         # Create the plots.
-        for i, (lin, label) in enumerate(zip(self, labels)):
+        for i, (lin, label) in enumerate(list(zip(self, labels))):
             style = styles[np.mod(i, n_styles)]
             if isinstance(style, string_types):
                 kwargs['linestyle'] = style
@@ -1000,7 +1000,7 @@ class LinResList(ResList):
 
         # Create the plots.
         label_freq = kwargs.pop('label_freq', None)
-        for i, (lin, label) in enumerate(zip(self, labels)):
+        for i, (lin, label) in enumerate(list(zip(self, labels))):
             if lin.sys.inputs > 1 or lin.sys.outputs > 1:
                 sys = lin.to_siso(pair[0], pair[1])
             else:

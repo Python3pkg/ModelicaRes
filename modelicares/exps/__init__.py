@@ -240,7 +240,7 @@ def write_params(params, fname='dsin.txt'):
     """
     # Pre-process the values.
     params = flatten_dict(params)
-    for key, value in params.items():
+    for key, value in list(params.items()):
         if isinstance(value, bool):
             params[key] = 1 if value else 0
         assert not isinstance(value, np.ndarray), (

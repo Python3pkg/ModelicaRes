@@ -389,7 +389,7 @@ def dict_to_lists(dic):
     keys = []
     values = []
 
-    for key, value in dic.iteritems():
+    for key, value in dic.items():
         keys.append(key)
         values.append(value)
 
@@ -470,10 +470,10 @@ def flatten_dict(d, parent_key='', separator='.'):
     # http://stackoverflow.com/questions/6027558/flatten-nested-python-dictionaries-compressing-keys,
     # 11/5/2012
     items = []
-    for key, value in d.items():
+    for key, value in list(d.items()):
         new_key = parent_key + separator + key if parent_key else key
         if isinstance(value, MutableMapping):
-            items.extend(flatten_dict(value, new_key).items())
+            items.extend(list(flatten_dict(value, new_key).items()))
         else:
             items.append((new_key, value))
     return dict(items)
@@ -664,24 +664,24 @@ def load_csv(fname, header_row=0, first_data_row=None, types=None, **kwargs):
         for __ in range(first_data_row - header_row - 1):
             next(reader)
     if types:
-        for i, (key, column, t) in enumerate(zip(keys, zip(*reader), types)):
+        for i, (key, column, t) in enumerate(list(zip(keys, list(zip(*reader)), types))):
             # zip(*reader) groups the data by columns.
             try:
                 if isinstance(t, string_types):
                     data[key] = column
                 elif isinstance(t, (float, int)):
-                    data[key] = np.array(map(t, column))
+                    data[key] = np.array(list(map(t, column)))
                 else:
-                    data[key] = map(t, column)
+                    data[key] = list(map(t, column))
             except ValueError:
                 raise ValueError("Could not cast column %i into %i." % (i, t))
     else:
-        for key, column in zip(keys, zip(*reader)):
+        for key, column in zip(keys, list(zip(*reader))):
             try:
-                data[key] = np.array(map(int, column))
+                data[key] = np.array(list(map(int, column)))
             except ValueError:
                 try:
-                    data[key] = np.array(map(float, column))
+                    data[key] = np.array(list(map(float, column)))
                 except ValueError:
                     data[key] = column
 
@@ -910,7 +910,7 @@ def plot(y, x=None, ax=None, label=None,
         plots = [ax.plot(xi, yi, label=None if label is None else label[i],
                          color=next(color), marker=next(marker),
                          dashes=next(dashes), **kwargs)
-                 for i, (xi, yi) in enumerate(zip(x, y))]
+                 for i, (xi, yi) in enumerate(list(zip(x, y)))]
 
     return plots
 
@@ -999,7 +999,7 @@ def read_values(names, fname, patterns):
     if isinstance(names, string_types):
         return _read_value(names)
     else:
-        return map(_read_value, names)
+        return list(map(_read_value, names))
 
 
 def save(formats=['pdf', 'png'], fname=None, fig=None):
@@ -1080,7 +1080,7 @@ def save(formats=['pdf', 'png'], fname=None, fig=None):
     for fmt in flatten_list(formats):
         full_name = fname + '.' + fmt
         fig.savefig(full_name)
-        print("Saved " + full_name)
+        print(("Saved " + full_name))
 
 
 def saveall(formats=['pdf', 'png']):
@@ -1122,7 +1122,7 @@ def saveall(formats=['pdf', 'png']):
     """
 
     # Get the figures.
-    figs = [manager.canvas.figure for manager in Gcf.figs.values()]
+    figs = [manager.canvas.figure for manager in list(Gcf.figs.values())]
 
     # Save the figures.
     for fig in figs:
@@ -1485,7 +1485,7 @@ def write_values(data, fname, patterns):
         text = src.read()
 
     # Set the values.
-    for name, value in data.items():
+    for name, value in list(data.items()):
         if value is not None:
             namere = regexp.escape(name) # Escape the dots, square brackets, etc.
             for pattern in patterns:
@@ -1671,13 +1671,13 @@ class CallDict(dict):
         and the requested attribute from its values.
         """
         return CallDict({key: getattr(value, attr)
-                         for key, value in self.items()})
+                         for key, value in list(self.items())})
 
     def __call__(self, *args, **kwargs):
         """Return a dictionary containing the keys of this dictionary and the
         results from calling its values.
         """
-        return {key: value(*args, **kwargs) for key, value in self.items()}
+        return {key: value(*args, **kwargs) for key, value in list(self.items())}
 
 
 class CallList(list):
@@ -1802,7 +1802,7 @@ class ParamDict(dict):
                     elements.append(key + '=' + value)
             return '(%s)' % ', '.join(elements) if elements else ''
 
-        return _str(tree(self.keys(), self.values(), container=ParamDict))
+        return _str(tree(list(self.keys()), list(self.values()), container=ParamDict))
 
 
 # Getch classes based on

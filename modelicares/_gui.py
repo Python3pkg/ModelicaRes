@@ -65,7 +65,7 @@ class PreviewPanel(wx.Panel):
             text += '\n' + 'displayUnit: ' + sim[name].displayUnit
             self.display.SetLabel(text)
             self.axes.clear()
-            self.axes.plot(sim[name].times(), sim[name].values())
+            self.axes.plot(sim[name].times(), list(sim[name].values()))
             self.axes.set_ylabel(name + " / $%s$" %
                                  unit2tex(sim[name].unit))
             self.axes.set_xlabel("Time / s")
@@ -99,7 +99,7 @@ class Browser(wx.Frame):
         def _build_tree(branches, branch):
             """Build the variable tree.
             """
-            for key in branches.keys():
+            for key in list(branches.keys()):
                 data = wx.TreeItemData()
                 if isinstance(branches[key], string_types):
                     data.SetData(branches[key])

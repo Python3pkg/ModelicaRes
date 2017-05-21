@@ -185,7 +185,7 @@ def _select(meth):
             # cast back to float.
             try:
                 # Assume t is a list of times.
-                return type(t)(map(meth_at_, t))
+                return type(t)(list(map(meth_at_, t)))
             except (AttributeError, TypeError):
                 # t is a single time.
                 return meth_at_(t)
@@ -311,7 +311,7 @@ class Variable(object):
         >>> C1_v.FV()
         2.4209836
         """
-        return self.values()[-1]
+        return list(self.values())[-1]
 
     @property
     def is_constant(self):
@@ -329,7 +329,7 @@ class Variable(object):
         >>> C1_v.is_constant
         False
         """
-        values = self.values()
+        values = list(self.values())
         return np.array_equal(values[:-1], values[1:])
 
     @property
@@ -348,7 +348,7 @@ class Variable(object):
         >>> C1_v.IV()
         4.0
         """
-        return self.values()[0]
+        return list(self.values())[0]
 
     @property
     def max(self):
@@ -366,7 +366,7 @@ class Variable(object):
         >>> C1_v.max()
         4.5046349
         """
-        return np.max(self.values())
+        return np.max(list(self.values()))
 
     @property
     def mean(self):
@@ -385,7 +385,7 @@ class Variable(object):
         0.76859528
         """
         t = self.times()
-        return _integral(self.values(), t) / (t[-1] - t[0])
+        return _integral(list(self.values()), t) / (t[-1] - t[0])
 
     @property
     def mean_rectified(self):
@@ -405,7 +405,7 @@ class Variable(object):
         2.2870927
         """
         t = self.times()
-        return _integral(np.abs(self.values()), t) / (t[-1] - t[0])
+        return _integral(np.abs(list(self.values())), t) / (t[-1] - t[0])
 
     @property
     def min(self):
@@ -423,7 +423,7 @@ class Variable(object):
         >>> C1_v.min()
         -3.8189442
         """
-        return np.min(self.values())
+        return np.min(list(self.values()))
 
     @property
     def RMS(self):
@@ -442,7 +442,7 @@ class Variable(object):
         2.4569478
         """
         t = self.times()
-        return np.sqrt(_integral(self.values() ** 2, t) / (t[-1] - t[0]))
+        return np.sqrt(_integral(list(self.values()) ** 2, t) / (t[-1] - t[0]))
 
     @property
     def RMS_AC(self):
@@ -463,7 +463,7 @@ class Variable(object):
         """
         t = self.times()
         mean = self.mean
-        return mean + np.sqrt(_integral((self.values() - mean) ** 2, t)
+        return mean + np.sqrt(_integral((list(self.values()) - mean) ** 2, t)
                               / (t[-1] - t[0]))
 
     @_select
@@ -531,7 +531,7 @@ class Variable(object):
         >>> Ro_R.value()
         0.0125
         """
-        values = self.values()
+        values = list(self.values())
         if np.array_equal(values[:-1], values[1:]):
             return values[0]
         raise ValueError("The value varies.  Use values() instead of value().")
@@ -940,8 +940,8 @@ class SimRes(Res, dict):
                 except IOError:
                     raise
                 except Exception as exception:
-                    print("The %s reader gave the following error message:\n%s"
-                          % (tool, exception.args[0]))
+                    print(("The %s reader gave the following error message:\n%s"
+                          % (tool, exception.args[0])))
                     continue
                 else:
                     break
@@ -1402,26 +1402,26 @@ class SimRes(Res, dict):
 
         # Retrieve the data.
         time = self['Time']
-        all_times = time.values()
+        all_times = list(time.values())
         time_unit = U._units(**time._display_unit)
         yvars1 = self(y1)
         yvars2 = self(y2)
         if x == 'Time':
-            y1 = [value / unit for value, unit in zip(yvars1.values(), units1)]
+            y1 = [value / unit for value, unit in zip(list(yvars1.values()), units1)]
             if f1:
                 y1_all = yvars1.values(all_times)
-                y1 += [f(y1_all) for f in f1.values()]
-            y2 = [value / unit for value, unit in zip(yvars2.values(), units2)]
+                y1 += [f(y1_all) for f in list(f1.values())]
+            y2 = [value / unit for value, unit in zip(list(yvars2.values()), units2)]
             if f2:
                 y2_all = yvars2.values(all_times)
-                y2 += [f(y2_all) for f in f2.values()]
+                y2 += [f(y2_all) for f in list(f2.values())]
         else:
-            x = self[x].values()
+            x = list(self[x].values())
             times = self[x].times()
             y1 = yvars1.values(times)
-            y1 += [f(y1) for f in f1.values()]
+            y1 += [f(y1) for f in list(f1.values())]
             y2 = yvars2.values(times)
-            y2 += [f(y2) for f in f2.values()]
+            y2 += [f(y2) for f in list(f2.values())]
 
         # Plot the data.
         if y2:
@@ -1629,13 +1629,13 @@ class SimRes(Res, dict):
             names = self.names
 
         # Create a dictionary of names and values.
-        times = self['Time'].values()
+        times = list(self['Time'].values())
         data = {}
         for name in names:
 
             # Get the values.
             if np.array_equal(self[name].times(), times):
-                values = self[name].values() # Save computation.
+                values = list(self[name].values()) # Save computation.
             else:
                 values = self[name].values(t=times) # Resample.
 
@@ -1702,7 +1702,7 @@ class SimRes(Res, dict):
             return dict.__getitem__(self, key)
         except KeyError:
             msg = key + " isn't a valid variable name."
-            close_matches = get_close_matches(key, self.keys())
+            close_matches = get_close_matches(key, list(self.keys()))
             if close_matches:
                 msg += "\n       ".join(["\n\nDid you mean one of these?"]
                                         + close_matches)
@@ -1716,11 +1716,11 @@ class SimRes(Res, dict):
         The result of the call is a new dictionary containing the variable names
         as keys and the return values as the values.
         """
-        values = (getattr(value, attr) for value in self.values())
+        values = (getattr(value, attr) for value in list(self.values()))
         try:
-            return util.CallDict(zip(self.keys(), values))
+            return util.CallDict(list(zip(list(self.keys()), values)))
         except ValueError:
-            if attr == 'value' and len(self) <> self.n_constants:
+            if attr == 'value' and len(self) != self.n_constants:
                 raise ValueError("The variables aren't all constants.  "
                                  "Use values() instead of value.")
             raise
@@ -2182,7 +2182,7 @@ class SimResList(ResList):
         values = (util.CallList([getattr(sim[name], attr) for sim in self])
                   for name in names)
         try:
-            return util.CallDict(zip(names, values))
+            return util.CallDict(list(zip(names, values)))
         except ValueError:
             if attr == 'value':
                 raise ValueError("The variables aren't all constants.  "
@@ -2339,7 +2339,7 @@ class SimResList(ResList):
             suffixes = [''] * len(self)
 
         # Generate the plots.
-        for i, (sim, suffix) in enumerate(zip(self, suffixes)):
+        for i, (sim, suffix) in enumerate(list(zip(self, suffixes))):
             ax1, ax2 = sim.plot(*args, suffix=suffix, **kwargs)
             if i == 0:
                 kwargs.update({'ax1': ax1, 'ax2': ax2})
@@ -2440,7 +2440,7 @@ class SimResSequence(SimRes):
             first = entries[0]
 
             return Variable(Samples(np.concatenate(entries.times()),
-                                    np.concatenate(entries.values())),
+                                    np.concatenate(list(entries.values()))),
                             first.dimension,
                             first.display_unit,
                             first.description)

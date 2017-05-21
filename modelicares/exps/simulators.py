@@ -414,7 +414,7 @@ class dymola_script(object):
                                    str(ParamDict(opts))[1:-1],
                                    problem[1:-1] if problem else ''])
                         + '\n')
-        print('Run %s:  %s' % (simulation, call))
+        print(('Run %s:  %s' % (simulation, call)))
 
     # TODO: Consider adding a cont() method like in dymosim below.  The main
     # difficulty is that it's impossible to access stopTime programmatically in
@@ -1051,7 +1051,7 @@ class fmi(object):
         # Write the simulation options.
         sim_options = self.fmu.simulate_options()
 
-        for key, value in sim_options.iteritems():
+        for key, value in sim_options.items():
             # Set the simulator options
             if key in self._options:
                 sim_options[key] = self._options[key]
@@ -1074,7 +1074,7 @@ class fmi(object):
             stop_time = self.fmu.get_default_experiment_stop_time()
 
         # Set the simulation parameters
-        self.fmu.set(params.keys(), params.values())
+        self.fmu.set(list(params.keys()), list(params.values()))
 
         # Run the model.
         self.memory_result[self.simulation][self.interval] = self.fmu.simulate(

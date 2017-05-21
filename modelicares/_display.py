@@ -21,14 +21,14 @@ try:
     from configparser import RawConfigParser
 except ImportError:
     # For Python 2:
-    from ConfigParser import RawConfigParser
+    from configparser import RawConfigParser
 
 class DisplayUnits(dict):
     """Special dictionary of display units, indexed by dimension string
     """
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
-        for dimension_str, display_unit in self.items():
+        for dimension_str, display_unit in list(self.items()):
             dimension_str = dimension_str.replace('.', '*')
             self[dimension_str] = (Exponents.fromstr(dimension_str),
                                    display_unit)
@@ -43,7 +43,7 @@ class DisplayUnits(dict):
         **Returns:** The display unit as a string
         """
         return '.'.join([self[base][1] if exp == 1 else self[base][1] + str(exp)
-                         for base, exp in dimension.items()])
+                         for base, exp in list(dimension.items())])
 
 # Load the default display units.
 try:

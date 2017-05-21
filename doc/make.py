@@ -49,7 +49,7 @@ def html():
     # Build the documentation.
     make_dirs()
     sphinx = sphinx_build.bake(b='html', d='build/doctrees')
-    print(sphinx('.', BUILD_DIR))
+    print((sphinx('.', BUILD_DIR)))
 
     # Spellcheck.
     if util.yes("Do you want to spellcheck the HTML documentation (y/n)?"):
@@ -147,7 +147,7 @@ def release():
     util.replace(html_fnames, [(r'"\./examples/', r'"./examples2/')])
 
     # Update the sitemap.
-    print(python('sitemap_gen.py', config="sitemap_conf.xml"))
+    print((python('sitemap_gen.py', config="sitemap_conf.xml")))
 
     # Commit the changes.
     try:
@@ -168,7 +168,7 @@ def release():
         git.stash.pop()
     except ErrorReturnCode_1:
         pass  # No stash was necessary in the first place.
-    print("Now back on " + branch)
+    print(("Now back on " + branch))
 
 
 def spellcheck():
@@ -286,7 +286,7 @@ def funcs_str():
     """Return a string listing the valid functions and their descriptions.
     """
     return "\n".join(["  %s: %s" % (action.ljust(10), function.description)
-                      for (action, function) in ACTIONS.items()])
+                      for (action, function) in list(ACTIONS.items())])
 
 
 # Main
